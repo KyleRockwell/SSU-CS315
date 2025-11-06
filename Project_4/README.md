@@ -4,11 +4,11 @@ ID: 008657669
 
 ## Collaboration and sources
     cplusplus.com
-        -ifstream
-        -isalpha
-        -string
-        -std::io
-        -and several more
+        - ifstream
+        - isalpha
+        - string
+        - std::io
+        - and several more
     https://www.ascii-code.com/
        cppreference.com 
 ## implementation Detals
