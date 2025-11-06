@@ -17,6 +17,7 @@ public:
     TreeNode *leftSubtree() const { return left; }
     TreeNode *rightSubtree() const { return right; }
     std::string value()const {return word;}
+    void value(std::string value) {word = value;}
     void leftSubtree( TreeNode *newLeft ) { left = newLeft; }
     void rightSubtree(TreeNode *newRight) { right = newRight; }
     void countUp() {this->count+= 1;}
