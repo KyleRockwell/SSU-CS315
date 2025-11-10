@@ -1,0 +1,50 @@
+huffman_coding 13 23
+I          3         0
+I          1         1
+I          2         2
+I          3         3
+I          1         4
+I          2         5
+I          1         6
+I          3         7
+I          2         8
+I          3         9
+I          2        10
+I          1        11
+I          2        12
+E
+E
+I          3        13
+E
+E
+I          2        14
+E
+E
+I          2        15
+E
+E
+I          1        16
+E
+E
+I          1        17
+E
+E
+I          2        18
+E
+E
+I          1        19
+E
+E
+I          2        20
+E
+E
+I          3        21
+E
+E
+I          3        22
+E
+E
+I          2        23
+E
+E
+I          2        24
