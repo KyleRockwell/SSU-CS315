@@ -42,6 +42,38 @@ void generateTrace(const unsigned seed,
     out.close();
 }
 
+void generateTrace_batch_drain(const unsigned seed,
+    const std::size_t n,
+    TraceConfig &config,
+    std::uniform_int_distribution<int> &dist,
+    std::mt19937& gen ) {
+
+    // create and open the output file name
+    auto outputFileName = config.makeTraceFileName(seed, n);
+    std::cout << "File name: " << outputFileName << std::endl;
+    std::ofstream out(outputFileName.c_str());
+    if (!out.is_open()) {
+        std::cerr << "Failed to open file " << outputFileName << std::endl;
+        exit(1);
+    }
+    out << config.profileName << " " << n << " " << seed << std::endl;
+
+    // Generate N inserts.
+    unsigned id = 0;        // id serves as a tiebreaker. Don't use the loop variable for
+                            // this purpose because we have multiple loops and could
+                            // accidentally generate duplicate IDs.
+    int spaceBeforeNumber = 10;
+    for (unsigned i = 0; i < n; ++i) {
+        out << "I " << std::setw(spaceBeforeNumber) << dist(gen) << std::setw(spaceBeforeNumber) << id++ << "\n";
+    }
+
+    for (unsigned i = 0; i < n; ++i) {
+
+        out << "E\n";
+    }
+    out.close();
+}
+
 int choose_key_upper_bound(unsigned int N) {
     // You can change the upperbound to
     // see how that effects the frequency (key)
@@ -73,7 +105,7 @@ int main() {
             const unsigned key_min = 1, key_max = choose_key_upper_bound(n);
             std::uniform_int_distribution<int> dist(key_min, key_max);
 
-            generateTrace(seed, n, config, dist, rng);
+            generateTrace_batch_drain(seed, n, config, dist, rng);
         }
 
     }
