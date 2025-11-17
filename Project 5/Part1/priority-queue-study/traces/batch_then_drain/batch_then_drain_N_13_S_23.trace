@@ -1,0 +1,27 @@
+batch_then_drain 13 23
+I          2         0
+I          3         1
+I          3         2
+I          1         3
+I          3         4
+I          3         5
+I          1         6
+I          2         7
+I          1         8
+I          2         9
+I          3        10
+I          1        11
+I          1        12
+E
+E
+E
+E
+E
+E
+E
+E
+E
+E
+E
+E
+E

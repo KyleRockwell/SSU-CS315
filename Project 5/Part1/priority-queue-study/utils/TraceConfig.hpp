@@ -16,7 +16,7 @@ struct TraceConfig {
         profileName(pName) {
         Ns.push_back(13);      // This is modeled after lab07 data which had 13 unique words.
         // Generates N = 2^10, 2^11, ..., 2^20
-        constexpr int start_exp = 10, end_exp = 20;
+        constexpr int start_exp = 1, end_exp = 20;
         for (int exp = start_exp; exp <= end_exp; exp++)
             Ns.push_back(1 << exp);
 

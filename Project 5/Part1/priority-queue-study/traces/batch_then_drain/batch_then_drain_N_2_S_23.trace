@@ -1,0 +1,5 @@
+batch_then_drain 2 23
+I          1         0
+I          2         1
+E
+E
