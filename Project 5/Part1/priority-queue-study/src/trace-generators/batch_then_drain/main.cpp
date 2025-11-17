@@ -9,6 +9,7 @@
 #include<random>
 #include<iomanip>
 
+
 void generateTrace(const unsigned seed,
     const std::size_t n,
     TraceConfig &config,
@@ -33,15 +34,13 @@ void generateTrace(const unsigned seed,
     for (unsigned i = 0; i < n; ++i) {
         out << "I " << std::setw(spaceBeforeNumber) << dist(gen) << std::setw(spaceBeforeNumber) << id++ << "\n";
     }
-    // Generate N-1 extractMin, extractMin, insert
-    const unsigned stop_idx = 2 * n - 1;
-    for (unsigned i = n; i < stop_idx; ++i) {
-        out << "E\nE\n";
-        out << "I " << std::setw(spaceBeforeNumber) << dist(gen) << std::setw(spaceBeforeNumber) << id++ << "\n";
+
+    for (unsigned i = 0; i < n; ++i) {
+
+        out << "E\n";
     }
     out.close();
 }
-
 
 int choose_key_upper_bound(unsigned int N) {
     // You can change the upperbound to
@@ -62,7 +61,7 @@ int choose_key_upper_bound(unsigned int N) {
 int main() {
 
     // TraceConfig provides pre-configured values such as N and seed
-    TraceConfig config( std::string("huffman_coding"));
+    TraceConfig config( std::string("batch_then_drain"));
     for (auto seed: config.seeds) {  // currently, we are using one seed only.
         std::mt19937 rng(seed);   // create a random-number generator using "seed"
 

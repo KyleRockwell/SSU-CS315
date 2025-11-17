@@ -231,21 +231,23 @@ void find_trace_files_or_die(const std::string &dir,
 }
 
 int main() {
-    const auto profileName = std::string("huffman_coding");
+   // const auto profileName = std::string("huffman_coding");
+    const auto profileName = std::string("batch_then_drain");
     const auto traceDir = std::string("../../traces") + "/" + profileName;
-
+    const auto csvFilePath= std::string("../../csvs") +"/"+ profileName +  ".csv";
+    
+    std::ofstream csvFile(csvFilePath);
     std::vector<std::string> traceFiles;
     find_trace_files_or_die(traceDir, profileName, traceFiles);
-    /*
+      
     for (auto file: traceFiles) {
         std::cout << file << "\n";
     }
-    */
+    
     if (traceFiles.size() == 0) {
         std::cerr << "No trace files found.\n";
         exit(1);
     }
-
     std::vector<RunResult> runResults;
     for (auto traceFile: traceFiles) {
         const auto pos = traceFile.find_last_of("/\\");
@@ -254,8 +256,9 @@ int main() {
         std::vector<Operation> operations;
         RunMetaData run_meta_data;
         load_trace_strict_header(traceFile, run_meta_data, operations);
+	
+ 	if (run_meta_data.N < 1 << 16) {	
 
-        if (run_meta_data.N < 1 << 16) {
             RunResult oneRunResult_i0(run_meta_data);
             QuadraticOracle oracle(compare_pair);
             oneRunResult_i0.impl = std::string("quadratic_oracle");
@@ -277,23 +280,23 @@ int main() {
         oneRunResult_i2.trace_path = traceFileBaseName;
         run_trace_ops(binomialQueue, oneRunResult_i2, operations);
         runResults.emplace_back(oneRunResult_i2);
-
         RunResult oneRunResult_i3(run_meta_data);
         LinearBaseLine linear_base_line(compare_pair);
         oneRunResult_i3.impl = std::string("linear_base");
         oneRunResult_i3.trace_path = traceFileBaseName;
         run_trace_ops(linear_base_line, oneRunResult_i3, operations);
         runResults.emplace_back(oneRunResult_i3);
-
+//
     }
     if (runResults.size() == 0) {
         std::cerr << "No trace files found.\n";
         return 1;
     }
+    csvFile << RunResult::csv_header() << std::endl;	
     std::cout << RunResult::csv_header() << std::endl;
     for (auto run: runResults) {
         std::cout << run.to_csv_row() << std::endl;
+       	csvFile<< run.to_csv_row() << std::endl;
     }
-
     return 0;
 }
