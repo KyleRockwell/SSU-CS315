@@ -1,0 +1,18 @@
+PROJECT 5 PART 2 TODO:
+------------------------------------------------------
+Trace generator
+modify harness to work with hash table
+Here is what the harness will do.
+	Read trace files, create vector of operations
+	replays ops against hash table
+		single and double probing
+	one warm up, seven timed trials
+	Resets the table between trials
+	timings
+add support choosing
+	type of compaction
+	type of probing
+	size of table
+output to csv
+generate chart
+

@@ -215,8 +215,8 @@ std::size_t HashTableDictionary::memberHelper(const std::string& v) {
         numProbesForThisItem++;
     }
     // std::cout << std::setw(6) << numComparisons << " comps\n";
-    totalProbes += numProbesForThisItem;
-    if (numProbesForThisItem == TABLE_SIZE) {
+    totalProbes += numProbesForThisItem; 
+    if (numProbesForThisItem >= TABLE_SIZE) {
         numFullScans++;
     }
     return hashTableMask.at(idx) == USED && hashTable.at(idx) == v ? idx : (firstDeleteIdx != hashTable.size() ? firstDeleteIdx : idx);
