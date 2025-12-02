@@ -8,6 +8,7 @@
 #include<vector>
 #include<string>
 #include<cstdint>
+#include "harness/RunResults.hpp"
 class HashTableDictionary {
 
     enum ELEMENT_STATUS {AVAILABLE, DELETED, USED};
@@ -36,7 +37,7 @@ public:
     void clear();
     std::string csvStats();
     static std::string csvStatsHeader();
-
+    void to_run_result(RunResult& run);
 
 private:
     std::size_t  TABLE_SIZE;
@@ -58,23 +59,23 @@ private:
 
     bool shouldCompact = false;
 
-    std::int64_t numLookups = 0;
-    std::int64_t numDeletes = 0;
-    std::int64_t numInserts = 0;
+    std::int64_t numLookups		= 0;
+    std::int64_t numDeletes		= 0;
+    std::int64_t numInserts		= 0;
 
-    int numCompactions = 0;
+    int 	 numCompactions		= 0;
 
-    std::int64_t numHits = 0;
-    std::int64_t numMisses = 0;
-    std::int64_t numFullScans = 0;
+    std::int64_t numHits 		= 0;
+    std::int64_t numMisses 		= 0;
+    std::int64_t numFullScans 		= 0;
 
-    std::int64_t totalProbes = 0;
+    std::int64_t totalProbes 		= 0;
 
-    std::int64_t numberOfActive = 0;
-    std::int64_t numberOfTombstones = 0;
-    std::int64_t maxTombstones = 0;
+    std::int64_t numberOfActive 	= 0;
+    std::int64_t numberOfTombstones 	= 0;
+    std::int64_t maxTombstones 		= 0;
 
-    std::int64_t maxValuesInTable = 0;
+    std::int64_t maxValuesInTable 	= 0;
 };
 
 

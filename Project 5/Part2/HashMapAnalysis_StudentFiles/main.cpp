@@ -74,26 +74,11 @@ RunResult run_trace_ops(Impl &hashDictionary,
     const size_t mid = trials_ns.size() / 2;     // the median of 0..numTrials
     std::nth_element(trials_ns.begin(), trials_ns.begin()+mid, trials_ns.end());
        	
-    std::ofstream csvFile(csvFilePath);
     runResult.elapsed_ns = trials_ns[mid];
-    std::cout << runResult.csv_header() ;
-    std::cout << hashDictionary.csvStatsHeader() << std::endl;
-    csvFile   << runResult.csv_header() << std::endl;
-    csvFile   << hashDictionary.csvStatsHeader() << std::endl;
     
-    std::cout << runResult.to_csv_row() << std::endl;
-    std::cout << hashDictionary.csvStats();
-    csvFile	  << runResult.to_csv_row() << std::endl;
-    csvFile	  << hashDictionary.csvStats() << std::endl;
-    hashDictionary.printStats();
-    
-    runResult.elapsed_ns = trials_ns[mid];
+    hashDictionary.to_run_result(runResult);
+
     return runResult;
-//TODO: find a spot for this
-//    std::cout << "in run trace printing csv.\n";
-//    std::cout << HashTableDictionary::csvStatsHeader() << std::endl;
-//    std::cout << hashDictionary.csvStats() << std::endl;
-//    std::cout << "in run trace printing csv ends.\n";
 }
 
 // The first line of the header must contain:  <profile> <N> <seed>
@@ -278,21 +263,26 @@ int main() {
            //	 runResults.emplace_back(oneRunResult_i0);
         }
 
-	//run double probing single compacton
+	//run double probing compacton n = 4096
     	HashTableDictionary::PROBE_TYPE pType = HashTableDictionary::DOUBLE;
-    	auto doWePerformCompaction = false;
+    	auto doWePerformCompaction = true;
 	RunResult oneRunResult_i1(run_meta_data);
-	RunResult.csvFile = csvFile;
-	HashTableDictionary hashDictionary_double_compact(tableSizeForN(run_meta_data.N), pType, doWePerformCompaction);
+	HashTableDictionary hashDictionary_double_compact(tableSizeForN(4096), pType, doWePerformCompaction);
 	oneRunResult_i1.impl = std::string("hash_map_double");
 	oneRunResult_i1.trace_path = traceFileBaseName;
 	run_trace_ops(hashDictionary_double_compact, oneRunResult_i1, operations);
 	runResults.emplace_back(oneRunResult_i1);
-//	HashTableDictionary 
-	 
-    //std::cout<< run_meta_data.N << " "  << run_meta_data.profile << run_meta_data.seed << std::endl;  //testing
-    HashTableDictionary hashDictionary(
-            tableSizeForN(run_meta_data.N), pType, doWePerformCompaction);
+	
+
+	//single probing compaction n = 4096	
+    	pType = HashTableDictionary::DOUBLE;
+    	doWePerformCompaction = true;
+	RunResult oneRunResult_i2(run_meta_data);
+	HashTableDictionary hashDictionary_double_compact2(tableSizeForN(4096), pType, doWePerformCompaction);
+	oneRunResult_i2.impl = std::string("hash_map_double");
+	oneRunResult_i2.trace_path = traceFileBaseName;
+	run_trace_ops(hashDictionary_double_compact, oneRunResult_i2, operations);
+	runResults.emplace_back(oneRunResult_i2);
 
    // hashDictionary.clear();
    // std::cout << "Starting a run with N = " << run_meta_data.N << " and " << operations.size() << " operations." << std::endl;
@@ -325,19 +315,12 @@ int main() {
         std::cerr << "No trace files found.\n";
         return 1;
     }
-   // csvFile << RunResult::csv_header() << std::endl;	
-   // std::cout << RunResult::csv_header() << std::endl;
+
+	std::cout << runResults[0].csv_header() ;
+	csvFile   << runResults[0].csv_header() << std::endl;
     for (auto run: runResults) {
-//	std::cout << run.csv_header() ;
-//	std::cout << hashDictionary.csvStatsHeader() << std::endl;
-//	csvFile   << run.csv_header() << std::endl;
-//	csvFile   << hashDictionary.csvStatsHeader() << std::endl;
-//	
-//	std::cout << run.to_csv_row() << std::endl;
-//    	std::cout << hashDictionary.csvStats();
-//	csvFile	  << run.to_csv_row() << std::endl;
-//	csvFile	  << hashDictionary.csvStats() << std::endl;
-//	hashDictionary.printStats();
+	std::cout << run.to_csv_row() << std::endl;
+	csvFile	  << run.to_csv_row() << std::endl;
     }
     return 0;
 }

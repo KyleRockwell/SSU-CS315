@@ -8,11 +8,31 @@ Here is what the harness will do.
 		single and double probing
 	one warm up, seven timed trials
 	Resets the table between trials
-	timings
 add support choosing
 	type of compaction
 	type of probing
 	size of table
 output to csv
 generate chart
+impl,profile,trace_path,N,seed,elapsed_ms,ops_total,inserts,erases,table_size,active,available,tombstones,total_probes,inserts,deletes,lookups,full_scans,compactions,max_in_table,available_pct,load_factor_pct,eff_load_factor_pct,tombstones_pct,average_probes,probe_type,compaction_state
+hash_map_double,lru_profile,lru_profile_N_1024_S_23.trace,1024,23,594.995,27380,15360,12020,
+1279,0,1279,0,0,0,0,0,0,0,0,100,0,0,0,-nan,double,compaction_off    1279 table size: 
+       0 cells marked as deleted.
+       0 active cells.
+    1279 available elements.
+       0 maximum number of values in the table ever.
+       0 total probes.
+
+       0 inserts.
+       0 deletes.
+       0 lookups.
+       0 full scans.
+       0 compactions.
+
+     100% ratio of available elements.
+       0% load factor.
+       0% effective load factor.
+       0% tombstone fraction.
+
+-nan average number of probes (double probing, compaction off).
 

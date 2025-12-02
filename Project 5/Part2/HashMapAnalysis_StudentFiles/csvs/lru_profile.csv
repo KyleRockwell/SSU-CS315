@@ -1,4 +1,3 @@
-impl,profile,trace_path,N,seed,elapsed_ms,ops_total,inserts,erases,
-table_size,active,available,tombstones,total_probes,inserts,deletes,lookups,full_scans,compactions,max_in_table,available_pct,load_factor_pct,eff_load_factor_pct,tombstones_pct,average_probes,probe_type,compaction_state
-hash_map_double,lru_profile,lru_profile_N_1024_S_23.trace,1024,23,594.995,27380,15360,12020,
-1279,0,1279,0,0,0,0,0,0,0,0,100,0,0,0,-nan,double,compaction_off
+impl,profile,trace_path,N,seed,elapsed_ms,ops_total,inserts,erases,table_size,active,available,tombstones,total_probes,inserts,deletes,lookups,full_scans,compactions,max_in_table,available_pct,load_factor_pct,eff_load_factor_pct,tombstones_pct,average_probes,probe_type,compaction_state
+hash_map_double,lru_profile,lru_profile_N_1024_S_23.trace,1024,23,9.91718,27380,15360,12020,5101,1024,1169,2908,64650,13044,12020,0,0,0,1024,22,20,77,57,2.579397,double,compaction_on
+hash_map_double,lru_profile,lru_profile_N_1024_S_23.trace,1024,23,9.90755,27380,15360,12020,5101,1024,1169,2908,64650,13044,12020,0,0,0,1024,22,20,77,57,2.579397,double,compaction_on

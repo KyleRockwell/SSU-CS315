@@ -235,18 +235,45 @@ bool HashTableDictionary::empty() const {
 }
 
 std::string HashTableDictionary::csvStatsHeader() {
-    return std::string("table_size") +
-           std::string(",active") +
-               std::string(",available") +
-                   std::string(",tombstones") +
-           std::string(",total_probes") +
-           std::string(",inserts") + std::string(",deletes") + std::string(",lookups") +
-           std::string(",full_scans") + std::string(",compactions") + std::string(",max_in_table") +
-           std::string(",available_pct") + std::string(",load_factor_pct") +
-           std::string(",eff_load_factor_pct") +
-           std::string(",tombstones_pct") + std::string(",average_probes") +
-           std::string(",probe_type") + std::string(",compaction_state");
+    return std::string("table_size"		) +
+           std::string(",active"		) +
+           std::string(",available"		) +
+           std::string(",tombstones"		) +
+           std::string(",total_probes"		) +
+           std::string(",inserts"		) + 
+	   std::string(",deletes"		) + 
+	   std::string(",lookups"		) +
+           std::string(",full_scans"		) + 
+	   std::string(",compactions"		) +
+	   std::string(",max_in_table"		) +
+           std::string(",available_pct"		) + 
+	   std::string(",load_factor_pct"	) +
+           std::string(",eff_load_factor_pct" 	) +
+           std::string(",tombstones_pct"      	) + 
+	   std::string(",average_probes"      	) +
+           std::string(",probe_type"		) + 
+	   std::string(",compaction_state"	);
 }
+
+void HashTableDictionary::to_run_result(RunResult& run){
+	run.TABLE_SIZE		=	TABLE_SIZE		;
+	run.numLookups		=	numLookups		;
+	run.numDeletes		=	numDeletes		;
+	run.numInserts		=	numInserts		;
+	run.numCompactions	=	numCompactions		;
+	run.numHits 		=	numHits 		;
+	run.numMisses 		=	numMisses 		;
+	run.numFullScans 	=	numFullScans 		;
+	run.totalProbes 	=	totalProbes 		;
+	run.numberOfActive 	=	numberOfActive 	        ;
+	run.numberOfTombstones 	=	numberOfTombstones 	;
+	run.maxTombstones 	=	maxTombstones 		;
+	run.maxValuesInTable 	=	maxValuesInTable 	;
+	run.shouldCompact 	=	shouldCompact		;
+}
+	
+
+
 
 std::string HashTableDictionary::csvStats() {
     return std::to_string(TABLE_SIZE) + "," + // table size
