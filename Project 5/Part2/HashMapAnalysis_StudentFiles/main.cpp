@@ -89,6 +89,7 @@ RunResult run_trace_ops(Impl &hashDictionary,
 bool load_trace_strict_header(const std::string &path,
                               RunMetaData &runMeta,
                               std::vector<Operation> &out_operations) {
+	std::cout<<"quack!" <<std::endl;
     std::string profile = "";
     int N = 0;
     int seed = 0;
@@ -97,11 +98,14 @@ bool load_trace_strict_header(const std::string &path,
     if (!in.is_open())
         return false;
 
+	std::cout<<"quack!" <<std::endl;
     // --- read FIRST line as header
     std::string header;
     if (!std::getline(in, header)) //returning false
         return false; 
     
+    	std::cout<< header << "quack!" <<std::endl;
+	
     // Look for a non-while-space character
     const auto first = header.find_first_not_of(" \t\r\n");
     // Since this is the first line, we don't expect it to be blank
@@ -109,16 +113,19 @@ bool load_trace_strict_header(const std::string &path,
     if (first == std::string::npos || header[first] == '#')
         return false;
 
+	std::cout<<"quack!" <<std::endl;
     // Create a string stream so that we can read the profile name,
     // N, and the seed more easily.
+    // TODO: not getting in the values but also not returning false
     std::istringstream hdr(header);
     if (!(hdr >> profile >> N >> seed))
         return false;
+	std::cout<<"quack!" <<std::endl;
     runMeta.profile = profile;
     runMeta.N = N;
     runMeta.seed = seed;
 
-    std::cout << "load_trace_strict_header values: \n profile: " << profile << "\nN: " << N << "\nSeed: " << seed <<std::endl;
+    std::cout << "load_trace_strict_header values: \n profile: " << profile << "\nN: " << N << "\nSeed: " << seed << "\nhdr: " << hdr << std::endl;
 
     // --- read ops, allowing comments/blank lines AFTER the header ---
     std::string line;
@@ -242,7 +249,6 @@ int main() {
         std::cerr << "No trace files found.\n";
         exit(1);
     }
-
    std::vector<RunResult> runResults;
    for (auto traceFile: traceFiles){
 	 const auto pos = traceFile.find_last_of("/\\");
@@ -251,37 +257,37 @@ int main() {
 	 std::vector<Operation> operations;
 	 RunMetaData run_meta_data;
     	 load_trace_strict_header(traceFile, run_meta_data, operations);
+	 std::cout<<"operations size: " << operations.size() << std::endl;
 
 	 //run oracle
 	if (run_meta_data.N < 1 << 16) {	
 
-           //	 RunResult oneRunResult_i0(run_meta_data);
-           //	 QuadraticOracle oracle(compare_pair);
-           //	 oneRunResult_i0.impl = std::string("quadratic_oracle");
-           //	 oneRunResult_i0.trace_path = traceFileBaseName;
-           //	 run_trace_ops(oracle, oneRunResult_i0, operations);
-           //	 runResults.emplace_back(oneRunResult_i0);
+        //   	 RunResult oneRunResult_i0(run_meta_data);
+        //   	 QuadraticOracle oracle(compare_pair);
+        //   	 oneRunResult_i0.impl = std::string("quadratic_oracle");
+        //   	 oneRunResult_i0.trace_path = traceFileBaseName;
+        //   	 run_trace_ops(oracle, oneRunResult_i0, operations);
+        //   	 runResults.emplace_back(oneRunResult_i0);
         }
 
+   //	//TODO: run_trace_ops: single probing, double probing, compaction, no compaction
 	//run double probing compacton n = 4096
     	HashTableDictionary::PROBE_TYPE pType = HashTableDictionary::DOUBLE;
     	auto doWePerformCompaction = true;
 	RunResult oneRunResult_i1(run_meta_data);
-	HashTableDictionary hashDictionary_double_compact(tableSizeForN(4096), pType, doWePerformCompaction);
+	HashTableDictionary hashDictionary(tableSizeForN(run_meta_data.N), pType, doWePerformCompaction);
 	oneRunResult_i1.impl = std::string("hash_map_double");
 	oneRunResult_i1.trace_path = traceFileBaseName;
-	run_trace_ops(hashDictionary_double_compact, oneRunResult_i1, operations);
+	run_trace_ops(hashDictionary, oneRunResult_i1, operations);
 	runResults.emplace_back(oneRunResult_i1);
-	
+	hashDictionary.clear();	
 
 	//single probing compaction n = 4096	
     	pType = HashTableDictionary::DOUBLE;
-    	doWePerformCompaction = true;
 	RunResult oneRunResult_i2(run_meta_data);
-	HashTableDictionary hashDictionary_double_compact2(tableSizeForN(4096), pType, doWePerformCompaction);
 	oneRunResult_i2.impl = std::string("hash_map_double");
 	oneRunResult_i2.trace_path = traceFileBaseName;
-	run_trace_ops(hashDictionary_double_compact, oneRunResult_i2, operations);
+	run_trace_ops(hashDictionary, oneRunResult_i2, operations);
 	runResults.emplace_back(oneRunResult_i2);
 
    // hashDictionary.clear();
@@ -302,7 +308,6 @@ int main() {
    // std::cout << HashTableDictionary::csvStatsHeader() << std::endl;
    // std::cout << hashDictionary.csvStats() << std::endl;
    // std::cout << "in run trace printing csv ends.\n";
-   //	//TODO: run_trace_ops: single probing, double probing, compaction, no compaction
 
    // hashDictionary.printMask();
    // hashDictionary.printStats();
