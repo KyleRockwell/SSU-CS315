@@ -98,13 +98,11 @@ bool load_trace_strict_header(const std::string &path,
     if (!in.is_open())
         return false;
 
-	std::cout<<"quack!" <<std::endl;
     // --- read FIRST line as header
     std::string header;
     if (!std::getline(in, header)) //returning false
         return false; 
     
-    	std::cout<< header << "quack!" <<std::endl;
 	
     // Look for a non-while-space character
     const auto first = header.find_first_not_of(" \t\r\n");
@@ -113,22 +111,16 @@ bool load_trace_strict_header(const std::string &path,
     if (first == std::string::npos || header[first] == '#')
         return false;
 
-	std::cout<<"quack!" <<std::endl;
     // Create a string stream so that we can read the profile name,
     // N, and the seed more easily.
-    // TODO: not getting in the values but also not returning false
     std::istringstream hdr(header);
     if (!(hdr >> profile >> N >> seed))
         return false;
-	std::cout<<"quack!" <<std::endl;
     runMeta.profile = profile;
     runMeta.N = N;
     runMeta.seed = seed;
-
-    std::cout << "load_trace_strict_header values: \n profile: " << profile << "\nN: " << N << "\nSeed: " << seed << "\nhdr: " << hdr << std::endl;
-
     // --- read ops, allowing comments/blank lines AFTER the header ---
-    std::string line;
+  std::string line;
     while (std::getline(in, line)) {
         const auto opCodeIdx = line.find_first_not_of(" \t\r\n");
         if (opCodeIdx == std::string::npos || line[opCodeIdx] == '#')
@@ -249,8 +241,11 @@ int main() {
         std::cerr << "No trace files found.\n";
         exit(1);
     }
+    int traceCounter = 0;
    std::vector<RunResult> runResults;
    for (auto traceFile: traceFiles){
+	traceCounter++;
+	std::cout<<"trace_counter: " << traceCounter << "traceFiles.size(): " << traceFiles.size() <<std::endl;
 	 const auto pos = traceFile.find_last_of("/\\");
 	 auto traceFileBaseName = (pos == std::string::npos) ? traceFile : traceFile.substr(pos + 1);
 
@@ -270,8 +265,8 @@ int main() {
         //   	 runResults.emplace_back(oneRunResult_i0);
         }
 
-   //	//TODO: run_trace_ops: single probing, double probing, compaction, no compaction
-	//run double probing compacton n = 4096
+    
+	//run double probing compacton
     	HashTableDictionary::PROBE_TYPE pType = HashTableDictionary::DOUBLE;
     	auto doWePerformCompaction = true;
 	RunResult oneRunResult_i1(run_meta_data);
@@ -279,16 +274,33 @@ int main() {
 	oneRunResult_i1.impl = std::string("hash_map_double");
 	oneRunResult_i1.trace_path = traceFileBaseName;
 	run_trace_ops(hashDictionary, oneRunResult_i1, operations);
-	runResults.emplace_back(oneRunResult_i1);
+	runResults.push_back(oneRunResult_i1);//
 	hashDictionary.clear();	
 
-	//single probing compaction n = 4096	
-    	pType = HashTableDictionary::DOUBLE;
+	//double probing no compaction
 	RunResult oneRunResult_i2(run_meta_data);
+	HashTableDictionary hashDictionary2(tableSizeForN(run_meta_data.N), pType, !doWePerformCompaction);
 	oneRunResult_i2.impl = std::string("hash_map_double");
 	oneRunResult_i2.trace_path = traceFileBaseName;
-	run_trace_ops(hashDictionary, oneRunResult_i2, operations);
-	runResults.emplace_back(oneRunResult_i2);
+	run_trace_ops(hashDictionary2, oneRunResult_i2, operations);
+	runResults.push_back(oneRunResult_i2);//
+	hashDictionary2.clear();	
+	
+	//single probing compaction	
+	HashTableDictionary HD_single_probe(tableSizeForN(run_meta_data.N), HashTableDictionary::SINGLE, doWePerformCompaction);
+	RunResult oneRunResult_i3(run_meta_data);
+	oneRunResult_i3.impl = std::string("hash_map_single");
+	oneRunResult_i3.trace_path = traceFileBaseName;
+	run_trace_ops(HD_single_probe, oneRunResult_i3, operations);
+	runResults.emplace_back(oneRunResult_i3);
+    
+	//single probing no compaction
+	HashTableDictionary HD_single_probe2(tableSizeForN(run_meta_data.N), HashTableDictionary::SINGLE, doWePerformCompaction);
+	RunResult oneRunResult_i4(run_meta_data);
+	oneRunResult_i4.impl = std::string("hash_map_single");
+	oneRunResult_i4.trace_path = traceFileBaseName;
+	run_trace_ops(HD_single_probe2, oneRunResult_i4, operations);
+	runResults.emplace_back(oneRunResult_i4);
 
    // hashDictionary.clear();
    // std::cout << "Starting a run with N = " << run_meta_data.N << " and " << operations.size() << " operations." << std::endl;
@@ -316,17 +328,20 @@ int main() {
    // else
    //     hashDictionary.printActiveDeleteMap();
    //}
+    }
+
     if (runResults.size() == 0) {
         std::cerr << "No trace files found.\n";
         return 1;
     }
-
+	std::cout << "runResults size: " << runResults.size() << std::endl;
 	std::cout << runResults[0].csv_header() ;
 	csvFile   << runResults[0].csv_header() << std::endl;
     for (auto run: runResults) {
+	std::cout << "output to csv runmetadata.n : " << run.run_meta_data.N << std::endl;
+
 	std::cout << run.to_csv_row() << std::endl;
 	csvFile	  << run.to_csv_row() << std::endl;
     }
     return 0;
-}
 }

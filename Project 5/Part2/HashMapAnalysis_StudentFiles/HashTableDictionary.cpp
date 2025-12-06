@@ -270,6 +270,7 @@ void HashTableDictionary::to_run_result(RunResult& run){
 	run.maxTombstones 	=	maxTombstones 		;
 	run.maxValuesInTable 	=	maxValuesInTable 	;
 	run.shouldCompact 	=	shouldCompact		;
+	run.probeType 		= 	probeType == DOUBLE	;
 }
 	
 

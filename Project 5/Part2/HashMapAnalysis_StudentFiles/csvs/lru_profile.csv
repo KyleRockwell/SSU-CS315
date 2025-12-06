@@ -1,3 +1,0 @@
-impl,profile,trace_path,N,seed,elapsed_ms,ops_total,inserts,erases,table_size,active,available,tombstones,total_probes,inserts,deletes,lookups,full_scans,compactions,max_in_table,available_pct,load_factor_pct,eff_load_factor_pct,tombstones_pct,average_probes,probe_type,compaction_state
-hash_map_double,lru_profile,lru_profile_N_1024_S_23.trace,1024,23,32.5198,27380,15360,12020,1279,1024,84,171,161177,13044,12020,0,0,32,1024,6,80,93,13,6.430618,double,compaction_on
-hash_map_double,lru_profile,lru_profile_N_1024_S_23.trace,1024,23,32.2673,27380,15360,12020,1279,1024,84,171,161177,13044,12020,0,0,32,1024,6,80,93,13,6.430618,double,compaction_on

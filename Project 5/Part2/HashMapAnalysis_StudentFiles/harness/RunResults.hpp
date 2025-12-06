@@ -2,14 +2,13 @@
 #include <string>
 #include <cstdint>
 #include <sstream>
-
 #include "RunMetaData.hpp"
 
 struct RunResult {
     // identifiers
-    enum PROBE_TYPE {SINGLE, DOUBLE};
+   
+    bool 	probeType		;
 
-    PROBE_TYPE probeType;
     bool 	 shouldCompact		;
     
     std::int64_t TABLE_SIZE		;
@@ -135,7 +134,7 @@ struct RunResult {
             static_cast<int>(static_cast<double>(numberOfTombstones) / static_cast<double>(TABLE_SIZE) * 100)) + ","
         + // ratio tombstones
         std::to_string(static_cast<double>(totalProbes) / static_cast<double>(numInserts + numDeletes + numLookups)) +
-        ((probeType == SINGLE) ? ",single," : ",double,") +
+        ((probeType) ? ",single," : ",double,") +
         (shouldCompact ? "compaction_on" : "compaction_off");
     }
 };
