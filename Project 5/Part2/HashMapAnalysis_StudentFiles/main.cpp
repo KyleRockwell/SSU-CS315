@@ -44,7 +44,7 @@ RunResult run_trace_ops(Impl &hashDictionary,
     }
 
     using clock = std::chrono::steady_clock;
-    const int numTrials = 7;
+    const int numTrials = 1;
 
     std::vector<std::int64_t> trials_ns;
    // runMeta.profile = profile;
@@ -89,7 +89,6 @@ RunResult run_trace_ops(Impl &hashDictionary,
 bool load_trace_strict_header(const std::string &path,
                               RunMetaData &runMeta,
                               std::vector<Operation> &out_operations) {
-	std::cout<<"quack!" <<std::endl;
     std::string profile = "";
     int N = 0;
     int seed = 0;
@@ -245,7 +244,6 @@ int main() {
    std::vector<RunResult> runResults;
    for (auto traceFile: traceFiles){
 	traceCounter++;
-	std::cout<<"trace_counter: " << traceCounter << "traceFiles.size(): " << traceFiles.size() <<std::endl;
 	 const auto pos = traceFile.find_last_of("/\\");
 	 auto traceFileBaseName = (pos == std::string::npos) ? traceFile : traceFile.substr(pos + 1);
 
@@ -264,7 +262,6 @@ int main() {
         //   	 run_trace_ops(oracle, oneRunResult_i0, operations);
         //   	 runResults.emplace_back(oneRunResult_i0);
         }
-
     
 	//run double probing compacton
     	HashTableDictionary::PROBE_TYPE pType = HashTableDictionary::DOUBLE;
@@ -293,13 +290,15 @@ int main() {
 	oneRunResult_i3.trace_path = traceFileBaseName;
 	run_trace_ops(HD_single_probe, oneRunResult_i3, operations);
 	runResults.emplace_back(oneRunResult_i3);
-    
+	HD_single_probe.clear();	
+	
 	//single probing no compaction
 	HashTableDictionary HD_single_probe2(tableSizeForN(run_meta_data.N), HashTableDictionary::SINGLE, doWePerformCompaction);
 	RunResult oneRunResult_i4(run_meta_data);
 	oneRunResult_i4.impl = std::string("hash_map_single");
 	oneRunResult_i4.trace_path = traceFileBaseName;
 	run_trace_ops(HD_single_probe2, oneRunResult_i4, operations);
+	HD_single_probe2.clear();	
 	runResults.emplace_back(oneRunResult_i4);
 
    // hashDictionary.clear();
