@@ -226,11 +226,15 @@ int main() {
     const auto profileName = std::string("lru_profile");
     const auto traceDir = std::string("traceFiles") + "/";
     const auto csvFilePath= std::string("csvs") +"/"+ profileName + ".csv";
-    const auto histogramFilePath1= std::string("histograms") +"/"+ profileName + "4096" +  ".csv";
-    const auto histogramFilePath2= std::string("histograms") +"/"+ profileName + "65536" + ".csv";
+    const auto histogramFilePath1= std::string("histograms") +"/"+ profileName + "4096_single" +  ".csv";
+    const auto histogramFilePath2= std::string("histograms") +"/"+ profileName + "4096_double" + ".csv";
+    const auto histogramFilePath3= std::string("histograms") +"/"+ profileName + "65536_single" + ".csv";
+    const auto histogramFilePath4= std::string("histograms") +"/"+ profileName + "65536_double" + ".csv";
     std::ofstream csvFile(csvFilePath);
     std::ofstream histogramFile(histogramFilePath1);
     std::ofstream histogramFile2(histogramFilePath2);
+    std::ofstream histogramFile3(histogramFilePath3);
+    std::ofstream histogramFile4(histogramFilePath4);
 
     std::vector<std::string> traceFiles;
     find_trace_files_or_die(traceDir, profileName, traceFiles);
@@ -276,7 +280,14 @@ int main() {
 		oneRunResult_i1.trace_path = traceFileBaseName;
 		run_trace_ops(hashDictionary, oneRunResult_i1, operations);
 		runResults.push_back(oneRunResult_i1);
-		 histogramFile << hashDictionary.outputBeforeAndAfterCompactionMaps();
+		 if(run_meta_data.N == 65536){
+			 histogramFile4 << hashDictionary.outputBeforeAndAfterCompactionMaps();
+		 }
+		 else{
+			 histogramFile2 << hashDictionary.outputBeforeAndAfterCompactionMaps();
+		 }
+		 hashDictionary.clear();
+
 		 std::cout << hashDictionary.outputBeforeAndAfterCompactionMaps();
 	
 	
@@ -297,7 +308,12 @@ int main() {
 		run_trace_ops(HD_single_probe, oneRunResult_i3, operations);
 		runResults.emplace_back(oneRunResult_i3);
 		
-		 histogramFile2 << HD_single_probe.outputBeforeAndAfterCompactionMaps();
+		 if(run_meta_data.N == 65536){
+			 histogramFile3 << HD_single_probe.outputBeforeAndAfterCompactionMaps();
+		 }
+		 else{
+			 histogramFile << HD_single_probe.outputBeforeAndAfterCompactionMaps();
+		 }
 		 std::cout << HD_single_probe.outputBeforeAndAfterCompactionMaps();
 		HD_single_probe.clear();	
 		
