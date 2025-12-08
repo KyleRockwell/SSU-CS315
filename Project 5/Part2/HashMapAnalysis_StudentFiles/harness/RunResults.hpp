@@ -9,7 +9,7 @@ struct RunResult {
    
     bool 	probeType		;
 
-    bool 	 shouldCompact		;
+    bool 	 shouldCompact	= 0	;
     
     std::int64_t TABLE_SIZE		;
     std::string impl			;         // "binheap", "binomial", "oracle", ...

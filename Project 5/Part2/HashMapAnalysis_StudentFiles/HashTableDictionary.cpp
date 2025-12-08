@@ -13,9 +13,9 @@ HashTableDictionary::HashTableDictionary(std::size_t large, PROBE_TYPE pType, bo
     hashTable.resize(large);
     hashTableMask.resize(large, AVAILABLE);
 }
-
 void HashTableDictionary::clear() {
     std::cout << "Clearing hash table...\n";
+    std::cout << "THIS HASH TABLE IS  COMPACTING? " << shouldCompact << std::endl;
     hashTable.clear();
     hashTableMask.clear();
 
@@ -196,6 +196,30 @@ void HashTableDictionary::printBeforeAndAfterCompactionMaps() {
         std::cout << afterCompaction.at(i);
     }
     std::cout << std::endl;
+
+}
+std::string  HashTableDictionary::outputBeforeAndAfterCompactionMaps() {
+	std::string os;
+   os =  (shouldCompact ? "compaction_on " : "compaction_off ");
+
+   os += (probeType == SINGLE ? "single_probing " : "double_probing ");
+   os += TABLE_SIZE + '\n';
+
+    for (std::size_t i = 0; i < beforeCompaction.size(); i++) {
+        if (i % 100 == 0)
+            os += '\n';
+        os += beforeCompaction.at(i);
+    }
+     os += '\n';
+     
+
+    for (std::size_t i = 0; i < afterCompaction.size(); i++) {
+        if (i % 100 == 0)
+            os += '\n';
+        os +=  afterCompaction.at(i);
+    }
+    os += '\n';
+    return os;
 
 }
 

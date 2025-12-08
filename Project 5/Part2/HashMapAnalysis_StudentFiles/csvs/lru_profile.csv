@@ -1,0 +1,5 @@
+impl,profile,trace_path,N,seed,elapsed_ms,ops_total,inserts,erases,table_size,active,available,tombstones,total_probes,inserts,deletes,lookups,full_scans,compactions,max_in_table,available_pct,load_factor_pct,eff_load_factor_pct,tombstones_pct,average_probes,probe_type,compaction_state
+hash_map_double,lru_profile,lru_profile_N_4096_S_23.trace,4096,23,123.933,109001,61440,47561,5101,4096,437,568,647943,51657,47561,0,0,33,4096,8,80,91,11,6.530498,single,compaction_on
+hash_map_single,lru_profile,lru_profile_N_4096_S_23.trace,4096,23,144.229,109001,61440,47561,5101,4096,418,587,1746417,51657,47561,0,0,27,4096,8,80,91,11,17.601816,double,compaction_on
+hash_map_double,lru_profile,lru_profile_N_65536_S_23.trace,65536,23,2087.99,1744450,983040,761410,81931,65536,6867,9528,10341305,826946,761410,0,0,32,65536,8,79,91,11,6.510697,single,compaction_on
+hash_map_single,lru_profile,lru_profile_N_65536_S_23.trace,65536,23,2339.52,1744450,983040,761410,81931,65536,6574,9821,28220106,826946,761410,0,0,26,65536,8,79,91,11,17.766865,double,compaction_on

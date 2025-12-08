@@ -8,6 +8,7 @@
 #include<vector>
 #include<string>
 #include<cstdint>
+#include <ostream>
 #include "harness/RunResults.hpp"
 class HashTableDictionary {
 
@@ -32,8 +33,9 @@ public:
     void printMask();
     void printMask(ELEMENT_STATUS status);
     void printBeforeAndAfterCompactionMaps();
+    std::string outputBeforeAndAfterCompactionMaps();
+    
     void printActiveDeleteMap();
-
     void clear();
     std::string csvStats();
     static std::string csvStatsHeader();

@@ -28,10 +28,8 @@ RunResult run_trace_ops(Impl &hashDictionary,
         }
     }
     // One untimed run
-
-    hashDictionary.clear();
     std::cout << "Starting the throw-away run for N = " << runResult.run_meta_data.N << " and "
-	      << ops.size() << " operations. " << std::endl;
+	      << ops.size() << " operations. "<< std::endl;
     for (const auto &op: ops) {
         switch (op.tag) {
             case OpCode::Insert:
@@ -44,7 +42,7 @@ RunResult run_trace_ops(Impl &hashDictionary,
     }
 
     using clock = std::chrono::steady_clock;
-    const int numTrials = 1;
+    const int numTrials = 7;
 
     std::vector<std::int64_t> trials_ns;
    // runMeta.profile = profile;
@@ -55,7 +53,7 @@ RunResult run_trace_ops(Impl &hashDictionary,
     for (int i = 0; i < numTrials; ++i) {
         hashDictionary.clear();
     std::cout << "Run  " << i <<" for N = " <<  runResult.run_meta_data.N << " and "
-	      << ops.size() << " operations. " << std::endl;
+	      << ops.size() << " operations. "  << std::endl;
      auto t0 = clock::now();
      for (const auto &op: ops) {
         switch (op.tag) {
@@ -77,7 +75,8 @@ RunResult run_trace_ops(Impl &hashDictionary,
     runResult.elapsed_ns = trials_ns[mid];
     
     hashDictionary.to_run_result(runResult);
-
+    hashDictionary.printBeforeAndAfterCompactionMaps(); 
+    
     return runResult;
 }
 
@@ -227,8 +226,12 @@ int main() {
     const auto profileName = std::string("lru_profile");
     const auto traceDir = std::string("traceFiles") + "/";
     const auto csvFilePath= std::string("csvs") +"/"+ profileName + ".csv";
-    
+    const auto histogramFilePath1= std::string("histograms") +"/"+ profileName + "4096" +  ".csv";
+    const auto histogramFilePath2= std::string("histograms") +"/"+ profileName + "65536" + ".csv";
     std::ofstream csvFile(csvFilePath);
+    std::ofstream histogramFile(histogramFilePath1);
+    std::ofstream histogramFile2(histogramFilePath2);
+
     std::vector<std::string> traceFiles;
     find_trace_files_or_die(traceDir, profileName, traceFiles);
       
@@ -253,7 +256,7 @@ int main() {
 	 std::cout<<"operations size: " << operations.size() << std::endl;
 
 	 //run oracle
-	if (run_meta_data.N < 1 << 16) {	
+   	if (run_meta_data.N == 4096 || run_meta_data.N == 65536) {	
 
         //   	 RunResult oneRunResult_i0(run_meta_data);
         //   	 QuadraticOracle oracle(compare_pair);
@@ -261,72 +264,53 @@ int main() {
         //   	 oneRunResult_i0.trace_path = traceFileBaseName;
         //   	 run_trace_ops(oracle, oneRunResult_i0, operations);
         //   	 runResults.emplace_back(oneRunResult_i0);
-        }
+        
     
 	//run double probing compacton
-    	HashTableDictionary::PROBE_TYPE pType = HashTableDictionary::DOUBLE;
-    	auto doWePerformCompaction = true;
-	RunResult oneRunResult_i1(run_meta_data);
-	HashTableDictionary hashDictionary(tableSizeForN(run_meta_data.N), pType, doWePerformCompaction);
-	oneRunResult_i1.impl = std::string("hash_map_double");
-	oneRunResult_i1.trace_path = traceFileBaseName;
-	run_trace_ops(hashDictionary, oneRunResult_i1, operations);
-	runResults.push_back(oneRunResult_i1);//
-	hashDictionary.clear();	
-
-	//double probing no compaction
-	RunResult oneRunResult_i2(run_meta_data);
-	HashTableDictionary hashDictionary2(tableSizeForN(run_meta_data.N), pType, !doWePerformCompaction);
-	oneRunResult_i2.impl = std::string("hash_map_double");
-	oneRunResult_i2.trace_path = traceFileBaseName;
-	run_trace_ops(hashDictionary2, oneRunResult_i2, operations);
-	runResults.push_back(oneRunResult_i2);//
-	hashDictionary2.clear();	
+	    	HashTableDictionary::PROBE_TYPE pType = HashTableDictionary::DOUBLE;
+	    	auto doWePerformCompaction = 1 ;
+		std::cout<<"dowepreformfalsection" << doWePerformCompaction << std::endl;
+		RunResult oneRunResult_i1(run_meta_data);
+		HashTableDictionary hashDictionary(tableSizeForN(run_meta_data.N), pType, doWePerformCompaction);
+		oneRunResult_i1.impl = std::string("hash_map_double");
+		oneRunResult_i1.trace_path = traceFileBaseName;
+		run_trace_ops(hashDictionary, oneRunResult_i1, operations);
+		runResults.push_back(oneRunResult_i1);
+		 histogramFile << hashDictionary.outputBeforeAndAfterCompactionMaps();
+		 std::cout << hashDictionary.outputBeforeAndAfterCompactionMaps();
 	
-	//single probing compaction	
-	HashTableDictionary HD_single_probe(tableSizeForN(run_meta_data.N), HashTableDictionary::SINGLE, doWePerformCompaction);
-	RunResult oneRunResult_i3(run_meta_data);
-	oneRunResult_i3.impl = std::string("hash_map_single");
-	oneRunResult_i3.trace_path = traceFileBaseName;
-	run_trace_ops(HD_single_probe, oneRunResult_i3, operations);
-	runResults.emplace_back(oneRunResult_i3);
-	HD_single_probe.clear();	
 	
-	//single probing no compaction
-	HashTableDictionary HD_single_probe2(tableSizeForN(run_meta_data.N), HashTableDictionary::SINGLE, doWePerformCompaction);
-	RunResult oneRunResult_i4(run_meta_data);
-	oneRunResult_i4.impl = std::string("hash_map_single");
-	oneRunResult_i4.trace_path = traceFileBaseName;
-	run_trace_ops(HD_single_probe2, oneRunResult_i4, operations);
-	HD_single_probe2.clear();	
-	runResults.emplace_back(oneRunResult_i4);
-
-   // hashDictionary.clear();
-   // std::cout << "Starting a run with N = " << run_meta_data.N << " and " << operations.size() << " operations." << std::endl;
-   // for (const auto &op: operations) {
-   //     // op.print();
-
-   //     switch (op.tag) {
-   //         case OpCode::Insert:
-   //             hashDictionary.insert(op.key);
-   //             break;
-   //         case OpCode::Erase:
-   //             (void) hashDictionary.remove(op.key);
-   //             break;
-   //     }
-   // }
-   // std::cout << "in run trace printing csv.\n";
-   // std::cout << HashTableDictionary::csvStatsHeader() << std::endl;
-   // std::cout << hashDictionary.csvStats() << std::endl;
-   // std::cout << "in run trace printing csv ends.\n";
-
-   // hashDictionary.printMask();
-   // hashDictionary.printStats();
-   // if (doWePerformCompaction)
-   //     hashDictionary.printBeforeAndAfterCompactionMaps();
-   // else
-   //     hashDictionary.printActiveDeleteMap();
-   //}
+	//	//double probing no compaction
+	//	RunResult oneRunResult_i2(run_meta_data);
+	//	HashTableDictionary hashDictionary2(tableSizeForN(run_meta_data.N), pType,false);
+	//	oneRunResult_i2.impl = std::string("hash_map_double");
+	//	oneRunResult_i2.trace_path = traceFileBaseName;
+	//	run_trace_ops(hashDictionary2, oneRunResult_i2, operations);
+	//	runResults.push_back(oneRunResult_i2);//
+	//	hashDictionary2.clear();	
+		
+		//single probing compaction	
+		HashTableDictionary HD_single_probe(tableSizeForN(run_meta_data.N), HashTableDictionary::SINGLE, doWePerformCompaction);
+		RunResult oneRunResult_i3(run_meta_data);
+		oneRunResult_i3.impl = std::string("hash_map_single");
+		oneRunResult_i3.trace_path = traceFileBaseName;
+		run_trace_ops(HD_single_probe, oneRunResult_i3, operations);
+		runResults.emplace_back(oneRunResult_i3);
+		
+		 histogramFile2 << HD_single_probe.outputBeforeAndAfterCompactionMaps();
+		 std::cout << HD_single_probe.outputBeforeAndAfterCompactionMaps();
+		HD_single_probe.clear();	
+		
+	//	//single probing no compaction
+	//	HashTableDictionary HD_single_probe2(tableSizeForN(run_meta_data.N), HashTableDictionary::SINGLE, false);
+	//	RunResult oneRunResult_i4(run_meta_data);
+	//	oneRunResult_i4.impl = std::string("hash_map_single");
+	//	oneRunResult_i4.trace_path = traceFileBaseName;
+	//	run_trace_ops(HD_single_probe2, oneRunResult_i4, operations);
+	//	runResults.emplace_back(oneRunResult_i4);
+	//	HD_single_probe2.clear();	
+	
+   	}	
     }
 
     if (runResults.size() == 0) {
